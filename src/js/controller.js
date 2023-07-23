@@ -4,14 +4,6 @@ import recipeView from "./views/recipeView";
 import "core-js/stable"; // polyfill evrything
 import "regenerator-runtime/runtime"; // polyfill async await
 
-const timeout = function (s) {
-  return new Promise(function (_, reject) {
-    setTimeout(function () {
-      reject(new Error(`Request took too long! Timeout after ${s} second`));
-    }, s * 1000);
-  });
-};
-
 ///////////////////////////////////////
 
 const controlRecipe = async function () {
@@ -27,10 +19,11 @@ const controlRecipe = async function () {
     // Rendring Recipe
     recipeView.render(model.state.recipe);
   } catch (e) {
-    alert(e);
+    recipeView.renderError();
   }
 };
 
-["hashchange", "load"].forEach((ev) =>
-  window.addEventListener(ev, controlRecipe)
-);
+const init = () => {
+  recipeView.addHandlerRender(controlRecipe);
+};
+init();
