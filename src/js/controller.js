@@ -3,14 +3,12 @@ import * as model from "./model";
 import recipeView from "./views/recipeView";
 import searchView from "./views/searchView";
 import resultsView from "./views/resultsView";
+import paginationView from "./views/paginationView";
 
 import "core-js/stable"; // polyfill evrything
 import "regenerator-runtime/runtime"; // polyfill async await
 
 ///////////////////////////////////////
-if (module.hot) {
-  module.hot.accept();
-}
 
 const controlRecipe = async function () {
   try {
@@ -41,14 +39,27 @@ const controlSearchResults = async () => {
     await model.loadSearchResults(query);
 
     // 3) Render results
-    resultsView.render(model.state.search.results);
+    // resultsView.render(model.state.search.results);
+    resultsView.render(model.getSearchResultsPage());
+
+    // 4) Render pagination button
+    paginationView.render(model.state.search);
   } catch (e) {
     console.log(e);
   }
 };
 
+const controlPagination = (goToPage) => {
+  // 1) Render NEW results
+  resultsView.render(model.getSearchResultsPage(goToPage));
+
+  // 2) Render NEW pagination button
+  paginationView.render(model.state.search);
+};
+
 const init = () => {
   recipeView.addHandlerRender(controlRecipe);
   searchView.addHandlerSearch(controlSearchResults);
+  paginationView.addHandlerClick(controlPagination);
 };
 init();
